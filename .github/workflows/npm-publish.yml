@@ -33,7 +33,7 @@ jobs:
           git config user.email github-actions@github.com
       - name: Add token for private package access to .npmrc
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.access-token }}" > ~/.npmrc
+          echo -e "//registry.npmjs.org/:_authToken=${{ secrets.access-token }}\nregistry=https://registry.npmjs.org/\n@techsee:registry=https://registry.npmjs.org/" > ~/.npmr
       - name: Install
         run:
           npm install
