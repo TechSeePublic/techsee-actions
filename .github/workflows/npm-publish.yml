@@ -1,0 +1,44 @@
+name: Package publishing reusable task
+
+on: 
+  # Testing reusable workflows
+  workflow_call:
+      # Inputs the workflow accepts.
+      inputs:
+        branch:
+          required: true
+          type: string
+          
+      secrets:
+        access-token:
+          description: 'A token passed from the caller workflow'
+          required: true
+jobs:
+  post-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+          token: ${{ secrets.access-token }}
+      - name: Checkout to the branch
+        run: |
+          git fetch
+          git reset --hard HEAD
+          git checkout ${{ inputs.branch }}
+          git pull origin v${{ inputs.releaseVersion }}
+      - name: Prepare folder
+        run: |
+          rm -r node_modules
+      - name: Identify
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Install
+        run:
+          npm i
+      - name: Publish
+        run:
+          npm publish
+      
