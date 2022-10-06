@@ -10,8 +10,11 @@ on:
           type: string
           
       secrets:
-        access-token:
-          description: 'A token passed from the caller workflow'
+        git-token:
+          description: 'A git token passed from the caller workflow'
+          required: true
+        npm-token:
+          description: 'A npm token passed from the caller workflow'
           required: true
 jobs:
   post-merge:
@@ -21,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
-          token: ${{ secrets.access-token }}
+          token: ${{ secrets.git-token }}
       - name: Checkout to the branch
         run: |
           git fetch
@@ -33,7 +36,7 @@ jobs:
           git config user.email github-actions@github.com
       - name: Add token for private package access to .npmrc
         run: |
-          echo -e "//registry.npmjs.org/:_authToken=${{ secrets.access-token }}\nregistry=https://registry.npmjs.org/\n@techsee:registry=https://registry.npmjs.org/" > .npmrc
+          echo -e "//registry.npmjs.org/:_authToken=${{ secrets.npm-token }}\nregistry=https://registry.npmjs.org/\n@techsee:registry=https://registry.npmjs.org/" > .npmrc
       - name: Install
         run:
           npm install
