@@ -6,7 +6,7 @@ on:
       # Inputs the workflow accepts.
       inputs:
         baseBranch:
-          default: dev
+          required: true
           type: string
         releaseVersion:
           required: true
