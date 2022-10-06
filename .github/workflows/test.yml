@@ -30,7 +30,7 @@ jobs:
           git fetch
           git checkout ${{ inputs.baseBranch }}
           git checkout -b v${{ inputs.releaseVersion }}
-       - name: Dummy changes
+      - name: Dummy changes
         run: |
           sed -i s/"version = '".*/"version = '${{ inputs.releaseVersion }}';"/ package.json
       - name: Commit the changes
