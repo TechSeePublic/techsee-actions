@@ -13,7 +13,8 @@ on:
           type: string
           
       secrets:
-        GITHUB_TOKEN:
+        access-token:
+          description: 'A token passed from the caller workflow'
           required: true
 jobs:
   create-release-and-pull-request:
@@ -23,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.access-token }}
       - name: Create release branch
         run: |
           git fetch
