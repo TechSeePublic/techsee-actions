@@ -27,9 +27,6 @@ jobs:
           git fetch
           git reset --hard HEAD
           git checkout ${{ inputs.branch }}
-      - name: Prepare folder
-        run: |
-          rm -r node_modules
       - name: Identify
         run: |
           git config user.name github-actions
