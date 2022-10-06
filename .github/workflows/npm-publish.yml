@@ -27,7 +27,6 @@ jobs:
           git fetch
           git reset --hard HEAD
           git checkout ${{ inputs.branch }}
-          git pull origin v${{ inputs.releaseVersion }}
       - name: Prepare folder
         run: |
           rm -r node_modules
