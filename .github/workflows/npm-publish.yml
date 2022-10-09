@@ -20,10 +20,11 @@ jobs:
   post-merge:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
           token: ${{ secrets.git-token }}
       - name: Checkout to the branch
         run: |
@@ -34,13 +35,12 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-      - name: Add token for private package access to .npmrc
-        run: |
-          echo -e "//registry.npmjs.org/:_authToken=${{ secrets.npm-token }}\nregistry=https://registry.npmjs.org/\n@techsee:registry=https://registry.npmjs.org/" > .npmrc
       - name: Install
         run:
           npm install
       - name: Publish
         run:
           npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       
