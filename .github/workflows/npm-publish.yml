@@ -63,7 +63,7 @@ jobs:
         with:
           payload: |
             {
-              "package-name": ${{ inputs.package-name }}
+              "package-name": "${{ inputs.package-name }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
