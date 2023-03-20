@@ -28,7 +28,7 @@ on:
           description: 'A slack webhook url for success notification'
           required: false
         slack-failure-webhookurl:
-          description: 'A slack webhook url for failurenotification'
+          description: 'A slack webhook url for failure notification'
           required: false
         
 jobs:
