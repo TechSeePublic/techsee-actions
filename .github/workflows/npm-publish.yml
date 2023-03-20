@@ -16,7 +16,7 @@ on:
         npm-token:
           description: 'A npm token passed from the caller workflow'
           required: true
-        slack-npm-publish-webhool-url:
+        slack-npm-publish-webhook-url:
           description: 'A slack webhook url for notification'
           required: false
         slack-npm-publish-package-name:
@@ -53,7 +53,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       
       - name: Post to Slack
-        if: ${{ secrets.slack-npm-publish-webhool-url }}
+        if: ${{ secrets.slack-npm-publish-webhook-url }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           payload: |
@@ -61,4 +61,4 @@ jobs:
               "package-name": ${{ secrets.slack-npm-publish-package-name }}
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.slack-npm-publish-webhool-url }}
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-npm-publish-webhook-url }}
