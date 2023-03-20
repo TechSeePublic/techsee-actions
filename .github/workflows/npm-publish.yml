@@ -8,10 +8,10 @@ on:
         branch:
           required: true
           type: string
-        slack-webhookurl:
-          description: 'A slack webhook url for notification'
-          type: string
-          required: false
+        use-slack:
+          description: 'Should there be a slack notification'
+          type: boolean
+          default: false
         package-name:
           description: 'A package name to be used in the slack notification'
           type: string
@@ -24,6 +24,9 @@ on:
         npm-token:
           description: 'A npm token passed from the caller workflow'
           required: true
+        slack-webhookurl:
+          description: 'A slack webhook url for notification'
+          required: false
         
 jobs:
   post-merge:
@@ -55,7 +58,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       - name: Post to Slack
-        if: ${{ inputs.slack-webhookurl }}
+        if: ${{ inputs.use-slack }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           payload: |
@@ -63,4 +66,4 @@ jobs:
               "package-name": ${{ inputs.package-name }}
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ inputs.slack-webhookurl }}
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
