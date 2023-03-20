@@ -24,8 +24,11 @@ on:
         npm-token:
           description: 'A npm token passed from the caller workflow'
           required: true
-        slack-webhookurl:
-          description: 'A slack webhook url for notification'
+        slack-success-webhookurl:
+          description: 'A slack webhook url for success notification'
+          required: false
+        slack-failure-webhookurl:
+          description: 'A slack webhook url for failurenotification'
           required: false
         
 jobs:
@@ -57,8 +60,8 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
-      - name: Post to Slack
-        if: ${{ inputs.use-slack }}
+      - name: Post to Slack in case of success
+        if: success() && ${{ inputs.use-slack }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           payload: |
@@ -66,4 +69,16 @@ jobs:
               "package-name": "${{ inputs.package-name }}"
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-success-webhookurl }}
+      - name: Post to Slack in case of failure
+        if: failure() && ${{ inputs.use-slack }}
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "package-name": "${{ inputs.package-name }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-failure-webhookurl }}
+          
+
