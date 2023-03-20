@@ -16,6 +16,12 @@ on:
         npm-token:
           description: 'A npm token passed from the caller workflow'
           required: true
+        slack-npm-publish-webhool-url:
+          description: 'A slack webhook url for notification'
+          required: false
+        slack-npm-publish-package-name:
+          description: 'A package name to be used in the slack notification'
+          required: false
 jobs:
   post-merge:
     runs-on: ubuntu-latest
@@ -46,3 +52,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       
+      - name: Post to Slack
+        if: ${{ secrets.slack-npm-publish-webhool-url }}
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "package-name": ${{ secrets.slack-npm-publish-package-name }}
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-npm-publish-webhool-url }}
