@@ -51,7 +51,6 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
-      
       - name: Post to Slack
         if: ${{ secrets.slack-npm-publish-webhook-url }}
         uses: slackapi/slack-github-action@v1.23.0
