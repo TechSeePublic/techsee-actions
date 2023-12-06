@@ -71,7 +71,7 @@ jobs:
                           "branch": "${{ inputs.branch }}",
                           "build_status": "success",
                           "log_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                          "pr_link":"<${{ inputs.pull-request-url }}|View Pull Request>"
+                          "pr_link":"${{ inputs.pull-request-url }}"
                       }
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
@@ -85,7 +85,7 @@ jobs:
                           "branch": "${{ inputs.branch }}",
                           "build_status": "failed",
                           "log_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                          "pr_link":"<${{ inputs.pull-request-url }}|View Pull Request>"
+                          "pr_link":"${{ inputs.pull-request-url }}"
                       }
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
