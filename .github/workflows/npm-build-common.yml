@@ -1,7 +1,6 @@
-name: Build package reusable task
+name: reusable task to run builds
 
 on:
-    # Testing reusable workflows
     workflow_call:
         # Inputs the workflow accepts.
         inputs:
@@ -11,11 +10,11 @@ on:
             use-slack:
                 description: 'Should there be a slack notification'
                 type: boolean
-                default: false
+                default: true
             package-name:
                 description: 'A package name to be used in the slack notification'
                 type: string
-                required: false
+                required: true
 
         secrets:
             git-token:
@@ -26,7 +25,7 @@ on:
                 required: true
             slack-webhookurl:
                 description: 'A slack webhook url for status notification'
-                required: false
+                required: true
 
 jobs:
     npm-build:
