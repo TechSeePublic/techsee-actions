@@ -51,6 +51,11 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   registry-url: 'https://registry.npmjs.org'
                   token: ${{ secrets.git-token }}
+            - name: Start RabbitMQ
+              uses: namoshek/rabbitmq-github-action@v1
+              with:
+                version: '3.12.12'
+                ports: '5672:5672'
             - name: Checkout to the branch
               run: |
                   git fetch
