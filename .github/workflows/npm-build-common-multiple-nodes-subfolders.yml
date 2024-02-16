@@ -69,7 +69,10 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
             - name: Build
               id: runBuild
-              run:
+              run: |
+                  pwd
+                  cd ${{ inputs.subfolders }}
+                  pwd
                   npm run build
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
