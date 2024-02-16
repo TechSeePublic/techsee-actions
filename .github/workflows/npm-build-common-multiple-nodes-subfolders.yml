@@ -61,7 +61,7 @@ jobs:
                   git config user.email github-actions@github.com
             - name: cd to subfolder
               run:
-                  cd ${{ inputs.branch }}
+                  cd ${{ inputs.subfolders }}
             - name: Install
               run:
                   npm install
