@@ -22,7 +22,7 @@ on:
             build-command:
                 description: 'Should there be a build command'
                 type: string
-                default: 'build-dev'
+                default: 'build'
 
         secrets:
             git-token:
