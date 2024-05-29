@@ -67,7 +67,7 @@ jobs:
             - name: Build
               id: runBuild
               run:
-                  npm run ${{ inputs.build }}
+                  npm run ${{ inputs.build-command }}
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
             - name: Post success to Slack
