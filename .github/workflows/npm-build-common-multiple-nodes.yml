@@ -19,6 +19,10 @@ on:
                 description: 'Link to the pull request'
                 required: true
                 type: string
+            build-command:
+                description: 'Should there be a build command'
+                type: string
+                default: 'build-dev'
 
         secrets:
             git-token:
@@ -63,7 +67,7 @@ jobs:
             - name: Build
               id: runBuild
               run:
-                  npm run build
+                  npm run ${{ inputs.build }}
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
             - name: Post success to Slack
