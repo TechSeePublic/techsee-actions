@@ -1,0 +1,107 @@
+name: reusable task to run builds
+
+on:
+  workflow_call:
+    # Inputs the workflow accepts.
+    inputs:
+      branch:
+        required: true
+        type: string
+      use-slack:
+        description: 'Should there be a slack notification'
+        type: boolean
+        default: true
+      package-name:
+        description: 'A package name to be used in the slack notification'
+        type: string
+        required: true
+      pull-request-url:
+        description: 'Link to the pull request'
+        required: true
+        type: string
+      build-command:
+        description: 'Should there be a build command'
+        type: string
+        default: 'build'
+
+    secrets:
+      git-token:
+        description: 'A git token passed from the caller workflow'
+        required: true
+      npm-token:
+        description: 'A npm token passed from the caller workflow'
+        required: true
+      slack-webhookurl:
+        description: 'A slack webhook url for status notification'
+        required: true
+
+jobs:
+  npm-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 20.x, 22.x ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+          token: ${{ secrets.git-token }}
+      - name: Start RabbitMQ
+        uses: namoshek/rabbitmq-github-action@v1
+        with:
+          version: '3.12.12'
+          ports: '5672:5672'
+      - name: Checkout to the branch
+        run: |
+          git fetch
+          git reset --hard HEAD
+          git checkout ${{ inputs.branch }}
+      - name: Identify
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Install
+        run:
+          npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+      - name: Wait for RabbitMQ to start
+        run: sleep 20      
+      - name: Build
+        id: runBuild
+        run:
+          npm run ${{ inputs.build-command }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+      - name: Post success to Slack
+        if: ${{ success() && inputs.use-slack }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+                "package-name": "${{ inputs.package-name }}",
+                "branch": "${{ inputs.branch }}",
+                "build_status": "success",
+                "log_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "pr_link":"${{ inputs.pull-request-url }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
+      - name: Post failure to Slack
+        if: ${{ failure() && inputs.use-slack }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+                "package-name": "${{ inputs.package-name }}",
+                "branch": "${{ inputs.branch }}",
+                "build_status": "failed",
+                "log_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "pr_link":"${{ inputs.pull-request-url }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack-webhookurl }}
