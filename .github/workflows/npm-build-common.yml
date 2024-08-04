@@ -19,6 +19,10 @@ on:
                 description: 'Link to the pull request'
                 required: true
                 type: string
+            build-command:
+                description: 'Should there be a build command'
+                type: string
+                default: 'build'
 
         secrets:
             git-token:
@@ -34,11 +38,16 @@ on:
 jobs:
     npm-build:
         runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [ 20.13.x ]
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
               with:
-                  node-version: '20.x'
+                  node-version: ${{ matrix.node-version }}
                   registry-url: 'https://registry.npmjs.org'
                   token: ${{ secrets.git-token }}
             - name: Checkout to the branch
@@ -58,7 +67,7 @@ jobs:
             - name: Build
               id: runBuild
               run:
-                  npm run build
+                  npm run ${{ inputs.build-command }}
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
             - name: Post success to Slack
