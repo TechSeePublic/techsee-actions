@@ -1,4 +1,4 @@
-name: Check for Alpha Techsee Packages
+name: Gate-check against merging alpha versions of TechSee packages as dependencies
 
 on:
   workflow_call:
@@ -23,7 +23,7 @@ jobs:
           
           # Validate package.json
           if ! grep -q '{' "$PACKAGE_JSON_PATH"; then
-            echo "Invalid package.json format."
+            echo "Error: Invalid package.json format."
             exit 1
           fi
 
@@ -31,9 +31,9 @@ jobs:
           alpha_packages=$(grep '@techsee/.*-alpha' "$PACKAGE_JSON_PATH" || true)
 
           if [ -n "$alpha_packages" ]; then
-            echo "Alpha version of a techsee package found:"
+            echo "Error: Alpha version of a techsee package found:"
             echo "$alpha_packages"
             exit 1
           else
-            echo "No alpha techsee packages found."
+            echo "Passed: No alpha techsee packages found."
           fi
