@@ -1,0 +1,32 @@
+name: 'Check for Alpha Techsee Packages'
+description: 'Checks if any @techsee packages in package.json have an alpha version.'
+inputs: # optional inputs can be defined if needed
+  package-path:
+    description: 'Path to the package.json file'
+    default: './package.json'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate package.json and check for alpha techsee packages
+      shell: bash
+      run: |
+        PACKAGE_JSON_PATH="${{ inputs.package-path }}"
+        
+        # Validate package.json
+        if ! grep -q '{' "$PACKAGE_JSON_PATH"; then
+          echo "Invalid package.json format."
+          exit 1
+        fi
+
+        # Extract lines containing @techsee/ and -alpha
+        alpha_packages=$(grep '@techsee/.*-alpha' "$PACKAGE_JSON_PATH" || true)
+
+        if [ -n "$alpha_packages" ]; then
+          echo "Alpha version of a techsee package found:"
+          echo "$alpha_packages"
+          exit 1
+        else
+          echo "No alpha techsee packages found."
+        fi
