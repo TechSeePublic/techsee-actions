@@ -38,7 +38,7 @@ on:
 jobs:
   npm-build:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     strategy:
       matrix:
         node-version: [ 20.13.x, 22.x ]
@@ -70,7 +70,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
       - name: Wait for RabbitMQ to start
-        run: sleep 20      
+        run: sleep 20
       - name: Build
         id: runBuild
         run:
