@@ -1,0 +1,41 @@
+name: Gate-check against merging alpha versions of TechSee packages as dependencies
+
+on:
+    workflow_call:
+
+jobs:
+    check-alpha:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Validate package.json and check for alpha techsee packages
+              shell: bash
+              run: |
+                  set -e
+                  found_alpha=false
+
+                  for package_file in $(find . -type f -name package.json); do
+                    echo "Checking $package_file..."
+
+                    if ! grep -q '{' "$package_file"; then
+                      echo "Error: Invalid package.json format in $package_file"
+                      exit 1
+                    fi
+
+                    alpha_packages=$(grep '@techsee/.*-alpha' "$package_file" || true)
+
+                    if [ -n "$alpha_packages" ]; then
+                      echo "Error: Alpha version of a techsee package found in $package_file:"
+                      echo "$alpha_packages"
+                      found_alpha=true
+                    fi
+                  done
+
+                  if [ "$found_alpha" = true ]; then
+                    exit 1
+                  else
+                    echo "Passed: No alpha techsee packages found."
+                  fi
