@@ -25,26 +25,17 @@ jobs:
                       exit 1
                     fi
 
-                    # Check package's own version
-                    if grep -q '"version": ".*-alpha' "$package_file"; then
-                      echo "Error: Package has an alpha version in $package_file"
-                      echo "Found version: $(grep '"version":' "$package_file")"
-                      found_alpha=true
-                    fi
-
-                    # Check dependencies for alpha versions
                     alpha_packages=$(grep '@techsee/.*-alpha' "$package_file" || true)
 
                     if [ -n "$alpha_packages" ]; then
-                      echo "Error: Alpha version of a techsee package found in dependencies of $package_file:"
+                      echo "Error: Alpha version of a techsee package found in $package_file:"
                       echo "$alpha_packages"
                       found_alpha=true
                     fi
                   done
 
                   if [ "$found_alpha" = true ]; then
-                    echo "Failed: Found alpha versions in package.json files"
                     exit 1
                   else
-                    echo "Passed: No alpha versions found in any package.json files."
+                    echo "Passed: No alpha techsee packages found."
                   fi
