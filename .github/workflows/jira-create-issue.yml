@@ -2,36 +2,44 @@ name: Create Jira Issue
 description: Creates a Jira issue. The step succeeds if the issue was created and fails otherwise.
 
 on:
-  # Triggered by release splitting event coming from techsee-api
-  repository_dispatch:
-    types: [create-jira-issue]
-
-  workflow_dispatch:
-   inputs:
-    project-key:
-     description: Jira project key (e.g. HY)
-     required: true
-    issue-type:
-     description: Jira issue type name
-     required: false
-     default: Task
-    summary:
-     description: Issue summary
-     required: true
-    jira-token:
-     description: Jira API token (pass from secrets)
-     required: true
-
+ repository_dispatch:
+  types: [create-jira-issue]
+  
+ workflow_call:
+  inputs:
+   project-key:
+    type: string
+    description: Jira project key (e.g. HY)
+    required: true
+    default: HY
+   issue-type:
+    type: string
+    description: Jira issue type name
+    required: false
+    default: Task
+   summary:
+    type: string
+    description: Issue summary
+    required: true
+    
+  outputs:
+   issue-key:
+    description: Key of the created issue (e.g. HY-123)
+    value: ${{ jobs.create-issue.outputs.issue-key }}
+    
 jobs:
   create-issue:
    runs-on: ubuntu-latest
+   outputs:
+    issue-key: ${{ steps.create.outputs.issue-key }}
    steps:
     - name: Create Jira issue
+      id: create
       shell: bash
       env:
         JIRA_BASE_URL: https://techsee.atlassian.net
-        JIRA_USER_EMAIL: ${{ inputs.jira-user-email }}
-        JIRA_API_TOKEN: ${{ inputs.jira-token }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_TOKEN }}
         PROJECT_KEY: ${{ inputs.project-key }}
         ISSUE_TYPE: ${{ inputs.issue-type }}
         SUMMARY: ${{ inputs.summary }}
