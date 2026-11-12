@@ -43,7 +43,7 @@ jobs:
       id: create
       shell: bash
       env:
-        JIRA_BASE_URL: https://techsee.atlassian.net
+        JIRA_BASE_URL: https://api.atlassian.com/ex/jira/106dfe16-0523-46d7-b328-bcbdcecd3888
         JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
         JIRA_API_TOKEN: ${{ secrets.JIRA_TOKEN }}
         PROJECT_KEY: ${{ inputs.project-key }}
