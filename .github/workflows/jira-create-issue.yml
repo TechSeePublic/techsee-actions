@@ -26,6 +26,12 @@ on:
    issue-key:
     description: Key of the created issue (e.g. HY-123)
     value: ${{ jobs.create-issue.outputs.issue-key }}
+
+  secrets:
+   JIRA_USER_EMAIL:
+    required: true
+   JIRA_TOKEN:
+    required: true
     
 jobs:
   create-issue:
