@@ -60,4 +60,12 @@ jobs:
           exit 1
         fi
 
-        echo "Created Jira issue $(jq -r '.key' "$RESPONSE_FILE")"
+        ISSUE_KEY=$(jq -r '.key // empty' "$RESPONSE_FILE")
+        if [ -z "$ISSUE_KEY" ]; then
+          echo "::error::Could not extract issue key from Jira response"
+          cat "$RESPONSE_FILE"
+          exit 1
+        fi
+
+        echo "Created Jira issue $ISSUE_KEY"
+        echo "issue-key=$ISSUE_KEY" >> "$GITHUB_OUTPUT"
